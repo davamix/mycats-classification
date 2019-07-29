@@ -1,0 +1,9 @@
+// notebook stuff
+__pycache__/
+.ipynb_checkpoints/
+
+// models
+bottleneck_features/
+
+// saved models
+*.h5
