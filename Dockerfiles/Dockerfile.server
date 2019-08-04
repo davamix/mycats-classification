@@ -1,0 +1,13 @@
+# https://medium.com/@mtngt/docker-flask-a-simple-tutorial-bbcb2f4110b5
+
+FROM python:3.6-buster
+
+COPY . /app
+
+WORKDIR /app
+
+RUN pip install -r ./server/requirements.txt
+
+ENTRYPOINT ["python"]
+
+CMD ["./server/app.py"]
