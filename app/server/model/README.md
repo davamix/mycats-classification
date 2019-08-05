@@ -1,0 +1,1 @@
+This folder will contains the model saved (fp16.h5) and the metrics.py file
