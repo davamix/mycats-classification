@@ -7,29 +7,36 @@ from flask import request
 
 from tensorflow.keras.models import load_model
 from metrics import MCC_binary
+import numpy as np
 
 app = Flask(__name__)
 api = Api(app)
 
-app.logger.info("Loading model...")
-#model = load_model('./model/fp16.h5', custom_objects={'MCC_binary': MCC_binary})
-app.logger.info("Model fp16 loaded.")
+labels = ['Blacky', 'Niche']
+
+def init():
+    global model
+    model = load_model('./model/fp16.h5', custom_objects={'MCC_binary': MCC_binary})
 
 @app.route('/', methods=['GET'])
 def hello_world():
-    return 'Hello, world 2!'
+    return 'Hello, world!'
 
 @app.route('/predict', methods=['POST'])
 def prediction():
-    req_data = request.get_json()
+    req_data = request.json
 
-    data = req_data['data']
+    data = np.array(req_data['data'])
 
-    app.logger.info(data)
-
-    #predictions = model.predict_classes(data)
+    predictions = model.predict_classes(data, batch_size=len(data))
     
-    return data
+    pred = labels[predictions[0]]
+
+    app.logger.info("#### PREDICTION #### ")
+    app.logger.info(pred)
+
+    return pred
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    init()
+    app.run(threaded=True, debug=True, host='0.0.0.0')

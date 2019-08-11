@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:2.0.0b0-gpu-py3-jupyter
+FROM tensorflow/tensorflow:2.0.0b1-gpu-py3-jupyter
 
 RUN apt update && apt install -y \
     libgtk2.0-dev libsm6 libxext6 libxrender1 libxrender-dev libfontconfig1 \
