@@ -1,6 +1,6 @@
 from tensorflow.keras.applications.xception import Xception
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, BatchNormalization, Dropout, Activation, Flatten
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, BatchNormalization, Dropout, Activation, Flatten, LeakyReLU
 
 import efficientnet.keras as efn
 
@@ -14,8 +14,9 @@ def build_xception(height, width, depth, include_top=False, weights='imagenet'):
     model.add(xception_model)
 
     model.add(Flatten())
-    model.add(Dense(256))
-    model.add(Activation("relu"))
+    model.add(Dense(128))
+    #model.add(Activation("relu"))
+    model.add(LeakyReLU())
     model.add(BatchNormalization())
     model.add(Dropout(0.4))
 
