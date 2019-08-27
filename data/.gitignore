@@ -1,3 +1,5 @@
-train/
-validation/
-test/
+# images
+*.jpg
+
+# dataset files
+*.zip

@@ -14,8 +14,17 @@ def build_xception(height, width, depth, include_top=False, weights='imagenet'):
     model.add(xception_model)
 
     model.add(Flatten())
+    model.add(Dense(512))
+    model.add(LeakyReLU())
+    model.add(BatchNormalization())
+    model.add(Dropout(0.4))
+    
+    model.add(Dense(256))
+    model.add(LeakyReLU())
+    model.add(BatchNormalization())
+    model.add(Dropout(0.4))
+
     model.add(Dense(128))
-    #model.add(Activation("relu"))
     model.add(LeakyReLU())
     model.add(BatchNormalization())
     model.add(Dropout(0.4))
