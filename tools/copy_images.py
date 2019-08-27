@@ -1,6 +1,9 @@
 # This scripts is used to copy the processed images from data/processed/vn folder to
 # data/train, data/validation and data/test folders automatically
 
+# Example:
+# python3 copy_images.py -train 70 -validation 20 -test 10 -L Blacky ../data/processed/v9 ../data/
+
 import argparse
 import os
 import sys
@@ -33,12 +36,16 @@ def shuffle_images(images):
 # Divide into train, validation and test
 def divide_images(images, train=None, validation=None, test=None):
     print("Dividing {} images...".format(len(images)))
+    print("T:{}, V:{}, T:{}".format(train, validation, test))
 
     if train is None and validation is None and test is None:
         raise ValueError("[ERROR] At least one of the datasets (train, validation) must have a value bigger than 0")
 
     if train + validation + test > 100:
         raise ValueError("[ERROR] The total percentage of train + validation + test must be between 0 and 100")
+
+    if train < 0 or validation < 0 or test < 0:
+        raise ValueError("[ERROR] The values cannot be negative")
 
     amount_train_images = 0
     amount_validation_images = 0
@@ -48,12 +55,15 @@ def divide_images(images, train=None, validation=None, test=None):
     if train is not None:
         amount_train_images = total_images * train * 0.01
         amount_train_images = 1 if amount_train_images > 0 and amount_train_images < 1 else int(amount_train_images)
+        print("Train: {}".format(amount_train_images))
     if validation is not None:
         amount_validation_images = total_images * validation * 0.01
         amount_validation_images = 1 if amount_validation_images > 0 and amount_validation_images < 1 else int(amount_validation_images)
+        print("Val: {}".format(amount_validation_images))
     if test is not None:
         amount_test_images = total_images * test * 0.01
         amount_test_images = 1 if amount_test_images > 0 and amount_test_images < 1 else int(amount_test_images)
+        print("Test: {}".format(amount_test_images))
 
     train_images = []
     validation_images = []
@@ -69,6 +79,9 @@ def divide_images(images, train=None, validation=None, test=None):
 
 # Copy to destination folders
 def copy_images(images, destination):
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+
     for img in images:
         print("{} --> {}".format(img, destination))
         shutil.copy(img, destination)
@@ -79,8 +92,11 @@ parser.add_argument('destination', help='Destination folder, is the parent folde
 parser.add_argument('-train', '-T', help='Amount of train images to copy, percentage value (int)', type=int)
 parser.add_argument('-validation', '-V', help='Amount of validation images to copy, percentage value (int)', type=int)
 parser.add_argument('-test', '-t', help='Amount of test image to copy, percentage value(int)', type=int)
+parser.add_argument('-label', '-L', help='Class label used for copy images to the folder with the same name inside of train, validation or test')
 
 args = parser.parse_args()
+
+label = args.label
 
 source_images = get_images(args.source)
 
@@ -95,6 +111,12 @@ except ValueError as e:
 train_destination = os.path.join(args.destination, 'train')
 validation_destination = os.path.join(args.destination, 'validation')
 test_destination = os.path.join(args.destination, 'test')
+
+# Add label name to the destination folders
+if label is not None:
+    train_destination = os.path.join(train_destination, label)
+    validation_destination = os.path.join(validation_destination, label)
+    test_destination = os.path.join(test_destination, label)
 
 if len(train_images) > 0:
     print("Copying train images...")
